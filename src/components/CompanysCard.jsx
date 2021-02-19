@@ -20,7 +20,7 @@ const CompanysCard = (props) => {
   };
 
   return (
-    <Container>
+    <Container maxWidth="sm">
       <Box my={4}>
         <Card>
           {company.length === 0 ? (
@@ -42,6 +42,10 @@ const CompanysCard = (props) => {
                     </Box>
                   ))
                 : null}
+              <Box m={1} display="flex" justifyContent="space-around">
+                <Button variant="outlined">edit</Button>
+                <Button variant="outlined">remove</Button>
+              </Box>
             </>
           )}
         </Card>
