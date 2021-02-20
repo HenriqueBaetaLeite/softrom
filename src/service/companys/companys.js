@@ -35,9 +35,9 @@ export const deleteCompany = async (id) =>
     .then((response) => response.data)
     .catch((err) => err);
 
-export const updateCompany = async (id) => {
+export const updateCompany = async (id, newData) => {
   const updatedCompany = await api
-    .put(URL + `/${id}`)
+    .put(URL + `/${id}`, newData)
     .then((response) => response.data)
     .catch((err) => err);
 

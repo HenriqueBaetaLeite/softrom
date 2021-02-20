@@ -12,39 +12,50 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
+  TextField,
 } from '@material-ui/core';
 
-import { deleteCompany } from '../service/companys/companys';
+import { deleteCompany, updateCompany } from '../service/companys/companys';
 
-const imgURLExample = 'https://picsum.photos/250/450';
-
-const photos = [
-  'https://i.picsum.photos/id/1/250/450.jpg?hmac=E8t3kigun_RlWVq-U1gz1uuoA8yai5Z0NIEAwWtXO8U',
-  'https://i.picsum.photos/id/0/250/450.jpg?hmac=N9UA7eXUtlLIZmP9TQly48SvOy5PVOGyPuPSFP1qSHM',
-  'https://i.picsum.photos/id/983/250/450.jpg?hmac=6QaeY1BqIVzFjw3SwgNEvSrT6hx-bJhjTUiVzqJh9PU',
-  'https://i.picsum.photos/id/283/250/450.jpg?hmac=wuv7U77nW4wzmBRSMTesWzmPIi0fWPxEXYgilfosE1U',
-  'https://i.picsum.photos/id/137/250/450.jpg?hmac=kt93NfVj9miJ0WHtfoENBpnMi0HdxVO1T4H2RyfFhpk',
-];
-
-const randomPhoto = photos[Math.round(Math.random() * 4)];
-
-const photo1 =
-  'https://i.picsum.photos/id/0/250/450.jpg?hmac=N9UA7eXUtlLIZmP9TQly48SvOy5PVOGyPuPSFP1qSHM';
+import { randomPhoto } from '../utils/randomImages';
 
 const CompanysCard = (props) => {
   const history = useHistory();
   const [company, setCompany] = useState([]);
-  const [danger, setDanger] = useState('');
   const [companyId, setCompanyId] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [nome, setNome] = useState(null);
+  const [tipo, setTipo] = useState(null);
+  const [doc, setDoc] = useState(null);
+  const [obs, setObs] = useState(null);
 
   useEffect(() => {
     const { id } = props.location.state;
     setCompanyId(id);
     getCompanyById(id)
       .then((resp) => setCompany(resp))
-      .catch((err) => setDanger(err));
+      .catch((err) => console.log(err));
   }, []);
+
+  const handleChange = (event) => {
+    const { id, value } = event.target;
+
+    switch (id) {
+      case 'nome':
+        setNome(value);
+        break;
+      case 'tipo':
+        setTipo(value);
+        break;
+      case 'doc':
+        setDoc(value);
+        break;
+      default:
+        setObs(value);
+        break;
+    }
+  };
 
   const handleHome = () => {
     history.push('/home');
@@ -57,17 +68,32 @@ const CompanysCard = (props) => {
     }, 1000);
   };
 
-  const openDeleteModal = () => {
-    setOpen(true);
+  const handleEdit = async () => {
+    await updateCompany(companyId, { nome, tipo, doc, obs });
+    setTimeout(() => {
+      history.push('/home');
+    }, 1000);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleOpenDelete = () => {
+    setOpenDelete(true);
+  };
+
+  const handleOpenEdit = () => {
+    setOpenEdit(true);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
   };
 
   const dialogDeleteBox = (
     <Dialog
-      open={open}
+      open={openDelete}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
@@ -78,7 +104,7 @@ const CompanysCard = (props) => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary" autoFocus>
+        <Button onClick={handleCloseDelete} color="primary" autoFocus>
           Cancelar
         </Button>
         <Button onClick={handleDelete} color="primary">
@@ -88,7 +114,54 @@ const CompanysCard = (props) => {
     </Dialog>
   );
 
-  console.log('Id da empresa', companyId);
+  const dialogEditBox = (
+    <Dialog open={openEdit} aria-labelledby="form-dialog-title">
+      <DialogTitle id="form-dialog-title">Editar {company.nome}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>Deseja alterar ou corrigir algum dado da empresa?</DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="nome"
+          label="Nome da empresa"
+          type="text"
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          id="tipo"
+          label="Tipo de documento"
+          type="text"
+          fullWidth
+          onChange={handleChange}
+        />
+        <TextField
+          margin="dense"
+          id="doc"
+          label="Documento"
+          type="text"
+          fullWidth
+          onChange={handleChange}
+        />
+        <TextField
+          margin="dense"
+          id="obs"
+          label="Observação"
+          type="text"
+          fullWidth
+          onChange={handleChange}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseEdit} color="primary">
+          Cancelar
+        </Button>
+        <Button onClick={handleEdit} color="primary">
+          Editar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 
   return (
     <Container maxWidth="sm">
@@ -120,16 +193,19 @@ const CompanysCard = (props) => {
                   : null}
               </Box>
               <Box display="flex" justifyContent="space-between">
-                <Button variant="outlined">editar</Button>
+                <Button variant="outlined" type="button" onClick={handleOpenEdit}>
+                  editar
+                </Button>
+                {openEdit ? dialogEditBox : null}
                 <Button
                   variant="outlined"
                   color="secondary"
                   type="button"
-                  onClick={openDeleteModal}
+                  onClick={handleOpenDelete}
                 >
                   remover
                 </Button>
-                {open ? dialogDeleteBox : null}
+                {openDelete ? dialogDeleteBox : null}
               </Box>
             </Box>
           </Box>
