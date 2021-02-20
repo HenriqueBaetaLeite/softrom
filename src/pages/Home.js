@@ -9,8 +9,13 @@ import { CircularProgress, Container, Box, Card, Typography } from '@material-ui
 import CustomTable from '../components/CustomTable';
 
 const TableCompanys = () => {
-  const { companysAPI } = useContext(CompanyProvider);
   const history = useHistory();
+  const { companysAPI } = useContext(CompanyProvider);
+  const [updateCompany, setUpdateCompany] = useState(null);
+
+  useEffect(() => {
+    setUpdateCompany(companysAPI);
+  }, [companysAPI]);
 
   const handleCompanybyID = (event, id) => {
     event.preventDefault();

@@ -28,3 +28,18 @@ export const createCompany = async (data) => {
 
   return company;
 };
+
+export const deleteCompany = async (id) =>
+  api
+    .delete(URL + `/${id}`)
+    .then((response) => response.data)
+    .catch((err) => err);
+
+export const updateCompany = async (id) => {
+  const updatedCompany = await api
+    .put(URL + `/${id}`)
+    .then((response) => response.data)
+    .catch((err) => err);
+
+  return updatedCompany;
+};
