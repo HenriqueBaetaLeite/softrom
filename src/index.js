@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
+
+import CompanyContext from './context/CompanyContext';
 
 ReactDOM.render(
   <BrowserRouter>
-    <App />
+    <CompanyContext>
+      <App />
+    </CompanyContext>
   </BrowserRouter>,
   document.getElementById('root'),
 );
-
-reportWebVitals();

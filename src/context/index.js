@@ -1,5 +1,5 @@
 import { createContext } from 'react';
 
-const Company = createContext();
+const CompanyProvider = createContext();
 
-export default Company;
+export default CompanyProvider;

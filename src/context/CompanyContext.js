@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from 'react';
 
-import Company from './index';
+import CompanyProvider from './index';
 
 import { getAllCompanys } from '../service/companys/companys';
 
 const CompanyContext = ({ children }) => {
-  const [companys, setCompanys] = useState([]);
+  const [companysAPI, setCompanysAPI] = useState([]);
 
   useEffect(() => {
-    getAllCompanys().then(async (resp) => {
-      setCompanys(resp).catch((err) => console.log(err));
-    });
+    getAllCompanys()
+      .then(async (resp) => {
+        setCompanysAPI(resp);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
-  const context = { companys };
+  const context = { companysAPI };
 
-  return <Company.Provider value={context}>{children}</Company.Provider>;
+  return <CompanyProvider.Provider value={context}>{children}</CompanyProvider.Provider>;
 };
 
 export default CompanyContext;
